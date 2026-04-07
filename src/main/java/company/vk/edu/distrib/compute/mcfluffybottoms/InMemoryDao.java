@@ -3,7 +3,6 @@ package company.vk.edu.distrib.compute.mcfluffybottoms;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
-
 import company.vk.edu.distrib.compute.Dao;
 
 public class InMemoryDao implements Dao<byte[]> {
@@ -12,6 +11,8 @@ public class InMemoryDao implements Dao<byte[]> {
 
     @Override
     public byte[] get(String key) throws NoSuchElementException, IllegalArgumentException, IOException {
+        validateKey(key);
+
         if (!data.containsKey(key)) {
             throw new NoSuchElementException("Key '" + key + "' not found.");
         }
@@ -21,11 +22,14 @@ public class InMemoryDao implements Dao<byte[]> {
 
     @Override
     public void upsert(String key, byte[] value) throws IllegalArgumentException, IOException {
+        validateKey(key);
+        validateValue(value);
         data.put(key, value);
     }
 
     @Override
     public void delete(String key) throws IllegalArgumentException, IOException {
+        validateKey(key);
         data.remove(key);
     }
 
@@ -34,4 +38,15 @@ public class InMemoryDao implements Dao<byte[]> {
         data.clear();
     }
 
+    private void validateKey(String key) {
+        if (key == null) {
+            throw new IllegalArgumentException("Key is null.");
+        }
+    }
+
+    private void validateValue(byte[] value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Value is null.");
+        }
+    }
 }
