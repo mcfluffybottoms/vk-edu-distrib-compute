@@ -43,7 +43,7 @@ public class KVServiceImpl implements KVService {
             return s;
         } catch (IOException e) {
             //log.error("Failed to create HTTP server on port {}.", port, e);
-            throw new RuntimeException("Server initialization failed", e);
+            throw new IllegalStateException("Server initialization failed", e);
         }
     }
 
