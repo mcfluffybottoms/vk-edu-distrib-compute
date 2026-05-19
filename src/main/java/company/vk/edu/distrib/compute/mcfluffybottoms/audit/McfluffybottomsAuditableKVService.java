@@ -51,7 +51,7 @@ public class McfluffybottomsAuditableKVService implements AuditableKVService {
 
     @Override
     public void start() {
-        if (!started.compareAndSet(true, true)) {
+        if (!started.compareAndSet(false, true)) {
             throw new IllegalStateException("Service was already started.");
         }
         initServer(port);

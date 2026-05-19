@@ -46,7 +46,7 @@ public class McfluffybottomsAuditService implements AuditService {
 
     @Override
     public void start() {
-        if (!started.compareAndSet(true, true)) {
+        if (started.compareAndSet(false, true)) {
             throw new IllegalStateException("Audit Service was already started, groupId=" + consumerGroupId);
         }
 
