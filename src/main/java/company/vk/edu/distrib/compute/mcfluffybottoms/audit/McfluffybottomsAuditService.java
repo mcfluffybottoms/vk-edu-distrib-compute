@@ -95,7 +95,6 @@ public class McfluffybottomsAuditService implements AuditService {
         } catch (SQLException e) {
             log.error("Error while listing audit entries", e);
         }
-        throw new UnsupportedOperationException("Unimplemented method 'listAuditEntries'");
     }
 
     private void initDatabase() throws SQLException {
