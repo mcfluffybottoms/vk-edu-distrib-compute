@@ -3,6 +3,7 @@ package company.vk.edu.distrib.compute.mcfluffybottoms.audit;
 import company.vk.edu.distrib.compute.AuditEvent;
 
 public class AuditEventSerializerUtils {
+    private final static int SIZE = 3;
     private AuditEventSerializerUtils() {
     }
 
@@ -14,8 +15,8 @@ public class AuditEventSerializerUtils {
         if (event == null) {
             return null;
         }
-        String[] parts = event.split("_", 3);
-        if (parts.length != 3) {
+        String[] parts = event.split("_", SIZE);
+        if (parts.length != SIZE) {
             return null;
         }
 

@@ -74,7 +74,6 @@ public class McfluffybottomsAuditService implements AuditService {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            thread = null;
         }
         closeDatabase();
         log.info("Audit Service was stopped, groupId={}", consumerGroupId);
@@ -127,7 +126,6 @@ public class McfluffybottomsAuditService implements AuditService {
         } catch (SQLException e) {
             log.error("Error qhile closing database", e);
         }
-        connection = null;
     }
 
     private void getThread() {
@@ -188,7 +186,7 @@ public class McfluffybottomsAuditService implements AuditService {
             statement.executeBatch();
             log.debug("Saved {} audit events", records.count());
         } catch (SQLException e) {
-            log.error("Could not save audit events", e);
+            log.error("Could not save audit events, {}", e.getMessage());
         }
     }
 

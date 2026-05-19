@@ -123,7 +123,6 @@ public class McfluffybottomsAuditableKVService implements AuditableKVService {
         if (producer != null) {
             this.producer.flush();
             this.producer.close();
-            this.producer = null;
         }
     }
 
@@ -142,7 +141,7 @@ public class McfluffybottomsAuditableKVService implements AuditableKVService {
         String query = exchange.getRequestURI().getQuery();
         if (query == null) {
             exchange.sendResponseHeaders(400, 0);
-            return null;
+            return new ConcurrentHashMap<>();
         }
 
         return parseQuery(query);
