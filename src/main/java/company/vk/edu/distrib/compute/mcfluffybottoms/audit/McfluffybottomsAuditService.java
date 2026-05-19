@@ -83,6 +83,11 @@ public class McfluffybottomsAuditService implements AuditService {
     @Override
     public List<AuditEvent> listAuditEntries() {
         List<AuditEvent> events = new ArrayList<>();
+
+        if (connection == null) {
+            return events;
+        }   
+
         String sqlQuery = "SELECT method, entity_id, timestamp FROM events ORDER BY id";
         try (
                 Statement statement = connection.createStatement();
