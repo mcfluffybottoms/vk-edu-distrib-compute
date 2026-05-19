@@ -2,8 +2,9 @@ package company.vk.edu.distrib.compute.mcfluffybottoms.audit;
 
 import company.vk.edu.distrib.compute.AuditEvent;
 
-public class AuditEventSerializerUtils {
+public final class AuditEventSerializerUtils {
     private static final int SIZE = 3;
+
     private AuditEventSerializerUtils() {
     }
 
