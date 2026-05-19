@@ -95,6 +95,8 @@ public class McfluffybottomsAuditService implements AuditService {
         } catch (SQLException e) {
             log.error("Error while listing audit entries", e);
         }
+
+        return events;
     }
 
     private void initDatabase() throws SQLException {
