@@ -8,17 +8,17 @@ import company.vk.edu.distrib.compute.KVService;
 import company.vk.edu.distrib.compute.Dao;
 
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.net.httpserver.HttpExchange;
 
 public class KVServiceImpl implements KVService {
-
-    //private static final Logger log = LoggerFactory.getLogger(KVServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(KVServiceImpl.class);
     private final HttpServer server;
     private final Dao<byte[]> dao;
 
@@ -42,7 +42,7 @@ public class KVServiceImpl implements KVService {
             s.createContext(PATH_ENTITY, this::handleEntity);
             return s;
         } catch (IOException e) {
-            //log.error("Failed to create HTTP server on port {}.", port, e);
+            log.error("Failed to create HTTP server on port {}.", port, e);
             throw new IllegalStateException("Server initialization failed", e);
         }
     }
@@ -50,13 +50,13 @@ public class KVServiceImpl implements KVService {
     @Override
     public void start() {
         server.start();
-        //log.info("Started");
+        log.info("Started");
     }
 
     @Override
     public void stop() {
         server.stop(0);
-        //log.info("Stopping");
+        log.info("Stopping");
     }
 
     private void handleStatus(HttpExchange exchange) throws IOException {
@@ -66,6 +66,7 @@ public class KVServiceImpl implements KVService {
             } else {
                 exchange.sendResponseHeaders(405, 0);
             }
+            log.debug("Status received.");
         }
     }
 
@@ -74,13 +75,15 @@ public class KVServiceImpl implements KVService {
             String method = exchange.getRequestMethod();
             String query = exchange.getRequestURI().getQuery();
             if (query == null) {
+                log.error("Query is empty.");
                 exchange.sendResponseHeaders(400, 0);
                 return;
             }
 
-            ConcurrentHashMap<String, String> args = parseQuery(query);
+            Map<String, String> args = parseQuery(query);
             String id = args.get("id");
             if (id == null || id.isBlank()) {
+                log.error("No id present in the query.");
                 exchange.sendResponseHeaders(400, 0);
                 return;
             }
@@ -95,6 +98,7 @@ public class KVServiceImpl implements KVService {
                 default ->
                     exchange.sendResponseHeaders(405, 0);
             }
+            log.debug("Entity handled.");
         }
     }
 
@@ -103,7 +107,9 @@ public class KVServiceImpl implements KVService {
             byte[] val = dao.get(id);
             exchange.sendResponseHeaders(200, val.length);
             exchange.getResponseBody().write(val);
+            log.debug("Got element on id {}.", id);
         } catch (NoSuchElementException e) {
+            log.error("No element on id {}.", id);
             exchange.sendResponseHeaders(404, 0);
         }
     }
@@ -111,16 +117,18 @@ public class KVServiceImpl implements KVService {
     private void handlePut(HttpExchange exchange, String id) throws IOException {
         byte[] data = exchange.getRequestBody().readAllBytes();
         dao.upsert(id, data);
+        log.debug("Data inserted on id {}.", id);
         exchange.sendResponseHeaders(201, 0);
     }
 
     private void handleDelete(HttpExchange exchange, String id) throws IOException {
         dao.delete(id);
+        log.debug("{} deleted.", id);
         exchange.sendResponseHeaders(202, 0);
     }
 
-    private ConcurrentHashMap<String, String> parseQuery(String query) {
-        ConcurrentHashMap<String, String> q = new ConcurrentHashMap<>();
+    private Map<String, String> parseQuery(String query) {
+        Map<String, String> q = new ConcurrentHashMap<>();
         String[] pairs = query.split("&");
         for (String pair : pairs) {
             int idx = pair.indexOf('=');

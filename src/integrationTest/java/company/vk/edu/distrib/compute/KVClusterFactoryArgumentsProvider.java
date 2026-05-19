@@ -7,12 +7,16 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.support.ParameterDeclarations;
 import org.junit.platform.commons.util.ReflectionUtils;
 
+import company.vk.edu.distrib.compute.mcfluffybottoms.clustering.McfluffybottomsConsistentKVClusterFactory;
+import company.vk.edu.distrib.compute.mcfluffybottoms.clustering.McfluffybottomsRendezvousKVClusterFactory;
+
 import java.util.Set;
 import java.util.stream.Stream;
 
 public class KVClusterFactoryArgumentsProvider implements ArgumentsProvider {
     private final Set<Class<? extends KVClusterFactory>> factories = Set.of(
-    //        DummyKVClusterFactory.class
+            McfluffybottomsConsistentKVClusterFactory.class,
+            McfluffybottomsRendezvousKVClusterFactory.class
     );
 
     @Override
