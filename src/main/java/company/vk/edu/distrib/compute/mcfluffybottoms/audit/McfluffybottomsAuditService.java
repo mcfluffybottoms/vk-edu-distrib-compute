@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -41,8 +42,8 @@ public class McfluffybottomsAuditService implements AuditService {
     public McfluffybottomsAuditService(String bootstrapServers, String consumerGroupId) {
         this.bootstrapServers = bootstrapServers;
         this.consumerGroupId = consumerGroupId;
-        String safeGroupId = consumerGroupId.replaceAll("[^a-zA-Z0-9_-]", "_");
-        this.url = "jdbc:h2:file:./mcfluffybottoms-audit-" + safeGroupId + ";DB_CLOSE_DELAY=-1";
+        String uuid = UUID.randomUUID().toString().replace("-", "_");
+        this.url = "jdbc:h2:file:./mcfluffybottoms-audit-" + uuid + ";DB_CLOSE_DELAY=-1";
     }
 
     @Override
@@ -148,11 +149,8 @@ public class McfluffybottomsAuditService implements AuditService {
             consumer.subscribe(List.of(TOPIC));
             while (started.get() && !Thread.currentThread().isInterrupted()) {
                 ConsumerRecords<String, String> records = consumer.poll(TIMEOUT);
-                if (!records.isEmpty()) {
-                    boolean saved = processRecords(records);
-                    if (saved) {
-                        consumer.commitSync();
-                    }
+                if (!records.isEmpty() && processRecords(records)) {
+                    consumer.commitSync();
                 }
             }
         } catch (Exception e) {

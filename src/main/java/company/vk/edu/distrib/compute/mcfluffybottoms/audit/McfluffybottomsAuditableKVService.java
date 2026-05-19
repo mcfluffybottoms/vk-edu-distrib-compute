@@ -203,7 +203,7 @@ public class McfluffybottomsAuditableKVService implements AuditableKVService {
             String method = exchange.getRequestMethod();
 
             Map<String, String> args = getQueryData(exchange);
-            if (args == null) {
+            if (args.isEmpty()) {
                 log.error("Query is empty.");
                 return;
             }
