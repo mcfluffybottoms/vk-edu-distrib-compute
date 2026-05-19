@@ -41,7 +41,8 @@ public class McfluffybottomsAuditService implements AuditService {
     public McfluffybottomsAuditService(String bootstrapServers, String consumerGroupId) {
         this.bootstrapServers = bootstrapServers;
         this.consumerGroupId = consumerGroupId;
-        this.url = "jdbc:h2:file:./mcfluffybottoms-audit-" + consumerGroupId.replaceAll("[^a-zA-Z0-9_-]", "_") + ";DB_CLOSE_DELAY=-1";
+        String safeGroupId = consumerGroupId.replaceAll("[^a-zA-Z0-9_-]", "_");
+        this.url = "jdbc:h2:file:./mcfluffybottoms-audit-" + safeGroupId + ";DB_CLOSE_DELAY=-1";
     }
 
     @Override
