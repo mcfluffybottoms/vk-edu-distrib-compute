@@ -144,8 +144,10 @@ public class McfluffybottomsAuditService implements AuditService {
             while (started.get() && !Thread.currentThread().isInterrupted()) {
                 ConsumerRecords<String, String> records = consumer.poll(TIMEOUT);
                 if (!records.isEmpty()) {
-                    processRecords(records);
-                    consumer.commitSync();
+                    boolean saved = processRecords(records);
+                    if (saved) {
+                        consumer.commitSync();
+                    }
                 }
             }
         } catch (Exception e) {
@@ -169,7 +171,7 @@ public class McfluffybottomsAuditService implements AuditService {
         return new KafkaConsumer<>(properties);
     }
 
-    private void processRecords(ConsumerRecords<String, String> records) throws SQLException {
+    private boolean processRecords(ConsumerRecords<String, String> records) throws SQLException {
         String sqlQuery = """
                     INSERT INTO events (method, entity_id, timestamp) VALUES (?, ?, ?)
                 """;
@@ -186,9 +188,10 @@ public class McfluffybottomsAuditService implements AuditService {
                 }
             }
             statement.executeBatch();
-            log.info("Saved {} audit events", records.count());
+            return true;
         } catch (SQLException e) {
             log.warn("Could not save audit events", e);
+            return false;
         }
     }
 
