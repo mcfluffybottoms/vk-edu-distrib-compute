@@ -124,7 +124,7 @@ public class McfluffybottomsAuditService implements AuditService {
         try {
             connection.close();
         } catch (SQLException e) {
-            log.error("Error qhile closing database", e);
+            log.error("Error qhile closing database, {}", e.getMessage(), e);
         }
     }
 
@@ -180,13 +180,13 @@ public class McfluffybottomsAuditService implements AuditService {
                     statement.setString(2, event.id());
                     statement.setLong(3, event.timestamp());
                     statement.addBatch();
-                    log.debug("Add statement {}", statement.toString());
+                    log.debug("Add statement {}", statement);
                 }
             }
             statement.executeBatch();
             log.debug("Saved {} audit events", records.count());
         } catch (SQLException e) {
-            log.error("Could not save audit events, {}", e.getMessage());
+            log.error("Could not save audit events: {}", e.getMessage(), e);
         }
     }
 
