@@ -261,16 +261,17 @@ public class KafkaTest extends TestBase {
 
     @BeforeEach
     void createTopic() throws ExecutionException, InterruptedException {
-        // Set<String> topics = adminClient.listTopics().names().get();
-        // if (!topics.contains(AUDIT_TOPIC_NAME)) {
-        //     NewTopic auditTopic = new NewTopic(AUDIT_TOPIC_NAME, 2, (short) 1);
-        //     adminClient.createTopics(List.of(auditTopic));
-        // }
         bootstrapServers = KAFKA.getBootstrapServers();
 
         Properties adminProps = new Properties();
         adminProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         adminClient = AdminClient.create(adminProps);
+
+        Set<String> topics = adminClient.listTopics().names().get();
+        if (!topics.contains(AUDIT_TOPIC_NAME)) {
+            NewTopic auditTopic = new NewTopic(AUDIT_TOPIC_NAME, 2, (short) 1);
+            adminClient.createTopics(List.of(auditTopic));
+        }
     }
 
     @AfterEach
