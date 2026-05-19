@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("PMD.TestClassWithoutTestCases")
-@Disabled
 @ParameterizedClass
 @ArgumentsSource(AuditServiceFactoryArgumentsProvider.class)
 @Testcontainers
